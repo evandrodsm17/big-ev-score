@@ -22,7 +22,7 @@
         <div id="listaJogadores" style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px;"></div>
         <button class="btn-generate" onclick="gerarCampeonato()">GERAR RODADAS</button>
         
-        <button class="btn-import" onclick="document.getElementById('importFile').click()">IMPORTAR JSON</button>
+        <button class="btn-import" onclick="document.getElementById('importFile').click()">IMPORTAR DADOS</button>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importarJSON(event)">
     </div>
 
@@ -50,7 +50,7 @@
             </table>
         </div>
         <div style="display: flex; gap: 10px; justify-content: center; margin-top: 2rem;">
-            <button class="btn-export" onclick="exportarJSON()">EXPORTAR JSON</button>
+            <button class="btn-export" onclick="exportarJSON()">EXPORTAR DADOS</button>
             <button class="btn-reset" onclick="resetarTudo()">ZERAR TUDO</button>
         </div>
     </div>
