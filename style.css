@@ -1,0 +1,96 @@
+:root {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --primary: #38bdf8;
+            --positive: #10b981;
+            --negative: #ef4444;
+            --border: #334155;
+            --warning: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 2rem; }
+        h1 { color: var(--positive); letter-spacing: -1px; margin-bottom: 0.5rem; }
+
+        /* Estilo dos Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Cadastro */
+        .setup-grid { display: flex; gap: 10px; margin: 1rem 0; }
+        input[type="text"] {
+            flex: 1; background: #0f172a; border: 1px solid var(--border);
+            color: white; padding: 12px; border-radius: 8px;
+        }
+        button {
+            padding: 10px 20px; border-radius: 8px; border: none;
+            font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .btn-add { background: #02895c; color: #fefefe; }
+        .btn-generate { background: #186ab2; color: #fff; width: 100%; margin-top: 10px; font-size: 1rem; }
+        .btn-export { background: #475569; color: white; }
+        .btn-reset { background: var(--negative); color: white; }
+
+        /* Rodadas */
+        .rodadas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .espectador-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px dashed var(--warning);
+            color: var(--warning);
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .jogo-linha {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 0.8rem;
+            padding: 8px;
+            border-radius: 8px;
+            background: #0f172a;
+        }
+        .time-label { flex: 1; font-size: 0.85rem; padding: 6px; border-radius: 4px; transition: 0.3s; }
+        .time-a { text-align: right; }
+        .time-b { text-align: left; }
+        
+        input[type="number"] {
+            width: 50px; background: var(--bg-card); border: 1px solid var(--border);
+            color: white; padding: 5px; text-align: center; border-radius: 4px;
+            font-weight: bold; font-family: monospace;
+        }
+
+        /* Cores de Resultado */
+        .vitoria { background-color: #064e3b !important; color: #a7f3d0; }
+        .derrota { background-color: #7f1d1d !important; color: #fecaca; }
+        .empate { color: var(--warning); }
+
+        /* Tabela */
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th { background: #111827; color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; padding: 12px; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid var(--border); }
+        .pos-lider { color: var(--positive); font-weight: bold; }
+        .pos-lanterna { color: var(--negative); font-weight: bold; }

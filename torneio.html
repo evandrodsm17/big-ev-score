@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <title>📈 Gestor de Torneio Futebol</title>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📈 TABELA FC</h1>
+        <p style="color: var(--text-dim)">Gestão de Torneio</p>
+    </header>
+
+    <div class="card" id="setupArea">
+        <h3>🎮 Cadastro de Jogadores</h3>
+        <div class="setup-grid">
+            <input type="text" id="playerInput" placeholder="NOME DO JOGADOR" onkeypress="if(event.key === 'Enter') addJogador()">>
+            <button class="btn-add" onclick="addJogador()">ADICIONAR</button>
+        </div>
+        <div id="listaJogadores" style="color: var(--text-dim); font-size: 0.9rem;"></div>
+        <button class="btn-generate" onclick="gerarCampeonato()">GERAR RODADAS</button>
+    </div>
+
+    <div id="campeonatoArea" style="display:none">
+        <div class="rodadas-grid" id="rodadasHtml"></div>
+
+        <div class="card">
+            <h3>Classificação Geral</h3>
+            <table>
+                <thead>
+                    <tr><th>#</th><th style="text-align:left">Jogador</th><th>Pts</th><th>J</th><th>V</th><th>SG</th></tr>
+                </thead>
+                <tbody id="corpoTabela"></tbody>
+            </table>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 2rem;">
+            <button class="btn-export" onclick="exportarJSON()">EXPORTAR JSON</button>
+            <button class="btn-reset" onclick="resetarTudo()">ZERAR TUDO</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
