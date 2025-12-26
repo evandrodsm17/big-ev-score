@@ -123,61 +123,6 @@ function render() {
   calcularTabela();
 }
 
-function calcularTabela() {
-  const s = {};
-  dados.jogadores.forEach((j) => (s[j] = { pts: 0, j: 0, v: 0, gp: 0, gc: 0 }));
-
-  dados.rodadas.forEach((rodada, ri) => {
-    rodada.forEach((jogo, ji) => {
-      if (jogo.casa === "FOLGA" || jogo.fora === "FOLGA") return;
-      const ga = parseInt(dados.placares[`r${ri}j${ji}a`]);
-      const gb = parseInt(dados.placares[`r${ri}j${ji}b`]);
-
-      if (isNaN(ga) || isNaN(gb)) return;
-
-      s[jogo.casa].j++;
-      s[jogo.fora].j++;
-      s[jogo.casa].gp += ga;
-      s[jogo.casa].gc += gb;
-      s[jogo.fora].gp += gb;
-      s[jogo.fora].gc += ga;
-
-      if (ga > gb) {
-        s[jogo.casa].pts += 3;
-        s[jogo.casa].v++;
-      } else if (gb > ga) {
-        s[jogo.fora].pts += 3;
-        s[jogo.fora].v++;
-      } else {
-        s[jogo.casa].pts++;
-        s[jogo.fora].pts++;
-      }
-    });
-  });
-
-  const ranking = Object.entries(s)
-    .map(([nome, stats]) => ({ nome, ...stats, sg: stats.gp - stats.gc }))
-    .sort((a, b) => b.pts - a.pts || b.sg - a.sg);
-
-  document.getElementById("corpoTabela").innerHTML = ranking
-    .map(
-      (t, i) => `
-            <tr>
-                <td class="${
-                  i === 0
-                    ? "pos-lider"
-                    : i === ranking.length - 1
-                    ? "pos-lanterna"
-                    : ""
-                }">${i + 1}º</td>
-                <td style="text-align:left; font-weight:bold">${t.nome}</td>
-                <td>${t.pts}</td><td>${t.j}</td><td>${t.v}</td><td>${t.sg}</td>
-            </tr>
-        `
-    )
-    .join("");
-}
-
 function exportarJSON() {
   const dataStr =
     "data:text/json;charset=utf-8," +
@@ -186,6 +131,111 @@ function exportarJSON() {
   dlAnchorElem.setAttribute("href", dataStr);
   dlAnchorElem.setAttribute("download", "banco_torneio.json");
   dlAnchorElem.click();
+}
+
+// --- FUNÇÃO DE IMPORTAR JSON ---
+function importarJSON(event) {
+  const arquivo = event.target.files[0];
+  if (!arquivo) return;
+
+  const leitor = new FileReader();
+  leitor.onload = function (e) {
+    try {
+      const conteudo = JSON.parse(e.target.result);
+
+      // Validação simples para ver se o arquivo tem a estrutura correta
+      if (conteudo.jogadores && conteudo.rodadas) {
+        dados = conteudo;
+        salvar(); // Isso salva no localStorage e faz o render()
+        alert("Campeonato importado com sucesso!");
+      } else {
+        alert("Arquivo JSON inválido!");
+      }
+    } catch (err) {
+      alert("Erro ao ler o arquivo JSON.");
+    }
+  };
+  leitor.readAsText(arquivo);
+}
+
+// --- CÁLCULO DA TABELA ATUALIZADO ---
+function calcularTabela() {
+  const s = {};
+  // Inicializa todas as estatísticas
+  dados.jogadores.forEach(
+    (j) => (s[j] = { pts: 0, j: 0, v: 0, e: 0, d: 0, gp: 0, gc: 0 })
+  );
+
+  dados.rodadas.forEach((rodada, ri) => {
+    rodada.forEach((jogo, ji) => {
+      if (jogo.casa === "FOLGA" || jogo.fora === "FOLGA") return;
+
+      const ga = parseInt(dados.placares[`r${ri}j${ji}a`]);
+      const gb = parseInt(dados.placares[`r${ri}j${ji}b`]);
+
+      if (isNaN(ga) || isNaN(gb)) return;
+
+      // Contabiliza Jogos e Gols
+      s[jogo.casa].j++;
+      s[jogo.fora].j++;
+      s[jogo.casa].gp += ga;
+      s[jogo.casa].gc += gb;
+      s[jogo.fora].gp += gb;
+      s[jogo.fora].gc += ga;
+
+      // Lógica de Vitórias, Empates e Derrotas
+      if (ga > gb) {
+        s[jogo.casa].pts += 3;
+        s[jogo.casa].v++;
+        s[jogo.fora].d++;
+      } else if (gb > ga) {
+        s[jogo.fora].pts += 3;
+        s[jogo.fora].v++;
+        s[jogo.casa].d++;
+      } else {
+        s[jogo.casa].pts += 1;
+        s[jogo.fora].pts += 1;
+        s[jogo.casa].e++;
+        s[jogo.fora].e++;
+      }
+    });
+  });
+
+  const ranking = Object.entries(s)
+    .map(([nome, stats]) => ({ nome, ...stats, sg: stats.gp - stats.gc }))
+    .sort((a, b) => b.pts - a.pts || b.sg - a.sg || b.gp - a.gp);
+
+  // Renderiza a tabela com todas as colunas
+  document.getElementById("corpoTabela").innerHTML = ranking
+    .map(
+      (t, i) => `
+        <tr>
+            <td class="${
+              i === 0
+                ? "pos-lider"
+                : i === ranking.length - 1
+                ? "pos-lanterna"
+                : ""
+            }">${i + 1}º</td>
+            <td style="text-align:left; font-weight:bold">${t.nome}</td>
+            <td>${t.pts}</td>
+            <td>${t.j}</td>
+            <td>${t.v}</td>
+            <td>${t.e}</td>
+            <td>${t.d}</td>
+            <td style="color: var(--text-dim)">${t.gp}</td>
+            <td style="color: var(--text-dim)">${t.gc}</td>
+            <td style="color: ${
+              t.sg > 0
+                ? "var(--positive)"
+                : t.sg < 0
+                ? "var(--negative)"
+                : "inherit"
+            }">${t.sg}</td>
+        </tr>
+    `
+    )
+    .join("");
 }
 
 function resetarTudo() {
@@ -197,4 +247,8 @@ function resetarTudo() {
 
 document.addEventListener("DOMContentLoaded", function () {
   render();
+
+  if(document.getElementById("playerInput")) {
+      document.getElementById("playerInput").focus();
+  }
 });

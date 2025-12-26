@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
     <title>📈 Gestor de Torneio Futebol</title>
 </head>
 <body>
@@ -20,8 +19,11 @@
             <input type="text" id="playerInput" placeholder="NOME DO JOGADOR" onkeypress="if(event.key === 'Enter') addJogador()">
             <button class="btn-add" onclick="addJogador()">ADICIONAR</button>
         </div>
-        <div id="listaJogadores" style="color: var(--text-dim); font-size: 0.9rem;"></div>
+        <div id="listaJogadores" style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px;"></div>
         <button class="btn-generate" onclick="gerarCampeonato()">GERAR RODADAS</button>
+        
+        <button class="btn-import" onclick="document.getElementById('importFile').click()">IMPORTAR JSON</button>
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importarJSON(event)">
     </div>
 
     <div id="campeonatoArea" style="display:none">
@@ -31,7 +33,18 @@
             <h3>Classificação Geral</h3>
             <table>
                 <thead>
-                    <tr><th>#</th><th style="text-align:left">Jogador</th><th>Pts</th><th>J</th><th>V</th><th>SG</th></tr>
+                    <tr>
+                        <th>#</th>
+                        <th style="text-align:left">Jogador</th>
+                        <th>Pts</th>
+                        <th>J</th>
+                        <th>V</th>
+                        <th>E</th>
+                        <th>D</th>
+                        <th>GP</th>
+                        <th>GC</th>
+                        <th>SG</th>
+                    </tr>
                 </thead>
                 <tbody id="corpoTabela"></tbody>
             </table>
@@ -42,5 +55,7 @@
         </div>
     </div>
 </div>
+
+<script src="script.js"></script>
 </body>
 </html>

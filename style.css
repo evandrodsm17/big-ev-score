@@ -43,6 +43,7 @@
         }
         .btn-add { background: #02895c; color: #fefefe; }
         .btn-generate { background: #186ab2; color: #fff; width: 100%; margin-top: 10px; font-size: 1rem; }
+        .btn-import { background: #6d6c6b; color: #fff; width: 100%; margin-top: 10px; font-size: 1rem; }
         .btn-export { background: #475569; color: white; }
         .btn-reset { background: var(--negative); color: white; }
 
