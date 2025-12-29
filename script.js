@@ -415,10 +415,10 @@ function resetarTudo() {
 // Função para capturar a tabela como imagem (necessita da lib html2canvas no HTML)
 function compartilharTabela() {
   const elemento = document.getElementById("tabelaParaImagem");
-  html2canvas(elemento, { backgroundColor: "#0f172a" }).then((canvas) => {
+  html2canvas(elemento, { backgroundColor: "#1e293b", scale: 2 }).then((canvas) => {
     const link = document.createElement("a");
     link.download = "tabela-campeonato.png";
-    link.href = canvas.toDataURL();
+    link.href = canvas.toDataURL("image/png");
     link.click();
   });
 }
