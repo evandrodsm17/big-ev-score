@@ -34,11 +34,11 @@ let dados = JSON.parse(localStorage.getItem("csc_fc_v2")) || {
 function popularSelect() {
   const select = document.getElementById("clubSelect");
   if (!select) return;
-  
+
   select.innerHTML = '<option value="">SELECIONE UM CLUBE</option>';
 
   // Criamos uma cópia do array e ordenamos por nome (A-Z)
-  const clubesOrdenados = [...CLUBES_BRASILEIRAO].sort((a, b) => 
+  const clubesOrdenados = [...CLUBES_BRASILEIRAO].sort((a, b) =>
     a.nome.localeCompare(b.nome)
   );
 
@@ -125,7 +125,6 @@ function salvar() {
 }
 
 function render() {
-
   // 1. Salva a posição atual do scroll
   const scrollPos = window.scrollY;
 
@@ -217,24 +216,28 @@ function render() {
           }
         }
 
+        const jogoId = `jogo-${ri}-${ji}`; // ID único para a linha do jogo
+
         jogosHtml += `
-          <div class="jogo-linha">
-            <div class="time-container ${clA}" style="text-align:right">
-              <img src="${jogo.casa.escudo}" class="escudo">
-              <span class="time-label">${jogo.casa.clube}</span>
-              <span class="nome-jogador">${jogo.casa.nome}</span>
-            </div>
-            <div class="placar-input-group">
-              <input type="number" value="${valA}" onchange="registrarPlacar('${keyA}', this.value)">
-              <span style="color: var(--border)">x</span>
-              <input type="number" value="${valB}" onchange="registrarPlacar('${keyB}', this.value)">
-            </div>
-            <div class="time-container ${clB}" style="text-align:left">
-              <img src="${jogo.fora.escudo}" class="escudo">
-              <span class="time-label">${jogo.fora.clube}</span>
-              <span class="nome-jogador">${jogo.fora.nome}</span>
-            </div>
-          </div>`;
+  <div class="jogo-linha" id="${jogoId}">
+    <div class="time-container ${clA}" id="${jogoId}-casa" style="text-align:right">
+      <img src="${jogo.casa.escudo}" class="escudo">
+      <span class="time-label">${jogo.casa.clube}</span>
+      <span class="nome-jogador">${jogo.casa.nome}</span>
+    </div>
+    <div class="placar-input-group">
+      <input type="number" value="${valA}" 
+        oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'a', this.value)">
+      <span style="color: var(--border)">x</span>
+      <input type="number" value="${valB}" 
+        oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'b', this.value)">
+    </div>
+    <div class="time-container ${clB}" id="${jogoId}-fora" style="text-align:left">
+      <img src="${jogo.fora.escudo}" class="escudo">
+      <span class="time-label">${jogo.fora.clube}</span>
+      <span class="nome-jogador">${jogo.fora.nome}</span>
+    </div>
+  </div>`;
       }
     });
 
@@ -463,6 +466,45 @@ function importarJSON(event) {
     }
   };
   reader.readAsText(file);
+}
+
+function atualizarPlacarDinamicamente(ri, ji, lado, valor) {
+    const key = `r${ri}j${ji}${lado}`;
+    dados.placares[key] = valor;
+    
+    // Salva no localStorage sem renderizar tudo
+    localStorage.setItem("csc_fc_v2", JSON.stringify(dados));
+
+    const valA = dados.placares[`r${ri}j${ji}a`] || "";
+    const valB = dados.placares[`r${ri}j${ji}b`] || "";
+
+    const elCasa = document.getElementById(`jogo-${ri}-${ji}-casa`);
+    const elFora = document.getElementById(`jogo-${ri}-${ji}-fora`);
+
+    if (elCasa && elFora) {
+        // Limpa classes anteriores
+        elCasa.classList.remove("vitoria", "derrota", "empate");
+        elFora.classList.remove("vitoria", "derrota", "empate");
+
+        if (valA !== "" && valB !== "") {
+            const gA = parseInt(valA);
+            const gB = parseInt(valB);
+
+            if (gA > gB) {
+                elCasa.classList.add("vitoria");
+                elFora.classList.add("derrota");
+            } else if (gB > gA) {
+                elFora.classList.add("vitoria");
+                elCasa.classList.add("derrota");
+            } else {
+                elCasa.classList.add("empate");
+                elFora.classList.add("empate");
+            }
+        }
+    }
+
+    // Atualiza apenas a tabela de classificação
+    calcularTabela();
 }
 
 document.addEventListener("DOMContentLoaded", render);
