@@ -306,3 +306,67 @@ input[type="number"] {
 #tabelaParaImagem table td {
   color: #f8fafc !important;
 }
+
+/* Forçar cores para exportação da rodada */
+.card-print-fix {
+  color: #f8fafc !important;
+  background-color: #1e293b !important;
+}
+
+.card-print-fix .time-label {
+  color: #f8fafc !important;
+}
+
+.card-print-fix .nome-jogador {
+  color: #94a3b8 !important;
+}
+
+.card-print-fix .jogo-linha {
+  background: #0f172a !important; /* Fundo mais escuro para contraste */
+}
+
+#searchClub {
+  width: 100%;
+  padding: 12px;
+  background: #0f172a;
+  border: 2px solid var(--primary); /* Destaque para o campo de busca */
+  color: white;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+#searchClub:focus {
+  border-color: var(--positive);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Botão de Print da Rodada */
+.btn-print-rodada {
+  background: var(--bg-body);
+  color: var(--text-main);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 10px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-print-rodada:hover {
+  background: var(--bg-body);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-print-rodada svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Garante que o botão suma no print */
+.is-printing .btn-print-rodada {
+  display: none !important;
+}

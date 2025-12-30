@@ -125,54 +125,33 @@ function salvar() {
 }
 
 function render() {
-  // 1. Salva a posição atual do scroll
   const scrollPos = window.scrollY;
+  const searchTerm =
+    document.getElementById("searchClub")?.value.toLowerCase() || "";
 
-  // --- NOVA RENDERIZAÇÃO DE INSCRITOS (CARDS) ---
+  // --- RENDERIZAÇÃO DE INSCRITOS ---
   const containerInscritos = document.getElementById("listaJogadores");
-  containerInscritos.innerHTML = ""; // Limpa a área de listagem
+  if (containerInscritos) {
+    containerInscritos.innerHTML = "";
+    containerInscritos.style.display = "flex";
+    containerInscritos.style.flexWrap = "wrap";
+    containerInscritos.style.gap = "10px";
+    containerInscritos.style.marginBottom = "20px";
 
-  // Define o estilo do container para exibir os cards lado a lado
-  containerInscritos.style.display = "flex";
-  containerInscritos.style.flexWrap = "wrap";
-  containerInscritos.style.gap = "10px";
-  containerInscritos.style.marginBottom = "20px";
-
-  dados.jogadores.forEach((j, index) => {
-    containerInscritos.innerHTML += `
-      <div class="card-inscrito" style="
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        min-width: 220px;
-        position: relative;
-      ">
-        <img src="${j.escudo}" width="35" height="35" style="object-fit: contain;">
-        <div>
-          <div style="font-weight: bold; font-size: 0.9rem; color: var(--text-main);">${j.nome}</div>
-          <div style="font-size: 0.75rem; color: var(--primary);">${j.clube}</div>
+    dados.jogadores.forEach((j, index) => {
+      containerInscritos.innerHTML += `
+        <div class="card-inscrito" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 12px; min-width: 220px; position: relative;">
+          <img src="${j.escudo}" width="35" height="35" style="object-fit: contain;">
+          <div>
+            <div style="font-weight: bold; font-size: 0.9rem; color: var(--text-main);">${j.nome}</div>
+            <div style="font-size: 0.75rem; color: var(--primary);">${j.clube}</div>
+          </div>
+          <button onclick="removerJogador(${index})" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; color: var(--negative); border: none; font-size: 1.2rem; cursor: pointer; padding: 0 5px;">&times;</button>
         </div>
-        <button onclick="removerJogador(${index})" style="
-          position: absolute;
-          right: 8px;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
-          color: var(--negative);
-          border: none;
-          font-size: 1.2rem;
-          cursor: pointer;
-          padding: 0 5px;
-        ">&times;</button>
-      </div>
-    `;
-  });
+      `;
+    });
+  }
 
-  // --- LÓGICA DE EXIBIÇÃO DE TELAS ---
   if (!dados.ativo) {
     document.getElementById("setupArea").style.display = "block";
     document.getElementById("campeonatoArea").style.display = "none";
@@ -183,17 +162,34 @@ function render() {
   document.getElementById("setupArea").style.display = "none";
   document.getElementById("campeonatoArea").style.display = "block";
 
-  // --- RESTANTE DA SUA FUNÇÃO DE RENDERIZAÇÃO DE RODADAS ---
+  // --- RENDERIZAÇÃO DE RODADAS COM FILTRO ---
   let html = "";
   dados.rodadas.forEach((rodada, ri) => {
     let jogosHtml = "";
     let espectador = "";
+    let temJogoVisivel = false;
 
     rodada.forEach((jogo, ji) => {
+      const nomeCasa = jogo.casa.nome.toLowerCase();
+      const clubeCasa = jogo.casa.clube.toLowerCase();
+      const nomeFora = jogo.fora.nome.toLowerCase();
+      const clubeFora = jogo.fora.clube.toLowerCase();
+
+      // Lógica de Filtro
+      const matchSearch =
+        nomeCasa.includes(searchTerm) ||
+        clubeCasa.includes(searchTerm) ||
+        nomeFora.includes(searchTerm) ||
+        clubeFora.includes(searchTerm);
+
+      if (!matchSearch && searchTerm !== "") return;
+
       if (jogo.casa.nome === "FOLGA" || jogo.fora.nome === "FOLGA") {
         espectador =
           jogo.casa.nome === "FOLGA" ? jogo.fora.nome : jogo.casa.nome;
+        temJogoVisivel = true;
       } else {
+        temJogoVisivel = true;
         const keyA = `r${ri}j${ji}a`;
         const keyB = `r${ri}j${ji}b`;
         const valA = dados.placares[keyA] || "";
@@ -216,54 +212,56 @@ function render() {
           }
         }
 
-        const jogoId = `jogo-${ri}-${ji}`; // ID único para a linha do jogo
-
+        const jogoId = `jogo-${ri}-${ji}`;
         jogosHtml += `
-  <div class="jogo-linha" id="${jogoId}">
-    <div class="time-container ${clA}" id="${jogoId}-casa" style="text-align:right">
-      <img src="${jogo.casa.escudo}" class="escudo">
-      <span class="time-label">${jogo.casa.clube}</span>
-      <span class="nome-jogador">${jogo.casa.nome}</span>
-    </div>
-    <div class="placar-input-group">
-      <input type="number" value="${valA}" 
-        oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'a', this.value)">
-      <span style="color: var(--border)">x</span>
-      <input type="number" value="${valB}" 
-        oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'b', this.value)">
-    </div>
-    <div class="time-container ${clB}" id="${jogoId}-fora" style="text-align:left">
-      <img src="${jogo.fora.escudo}" class="escudo">
-      <span class="time-label">${jogo.fora.clube}</span>
-      <span class="nome-jogador">${jogo.fora.nome}</span>
-    </div>
-  </div>`;
+          <div class="jogo-linha" id="${jogoId}">
+            <div class="time-container ${clA}" id="${jogoId}-casa" style="text-align:right">
+              <img src="${jogo.casa.escudo}" class="escudo">
+              <span class="time-label">${jogo.casa.clube}</span>
+              <span class="nome-jogador">${jogo.casa.nome}</span>
+            </div>
+            <div class="placar-input-group">
+              <input type="number" value="${valA}" oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'a', this.value)">
+              <span style="color: var(--border)">x</span>
+              <input type="number" value="${valB}" oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'b', this.value)">
+            </div>
+            <div class="time-container ${clB}" id="${jogoId}-fora" style="text-align:left">
+              <img src="${jogo.fora.escudo}" class="escudo">
+              <span class="time-label">${jogo.fora.clube}</span>
+              <span class="nome-jogador">${jogo.fora.nome}</span>
+            </div>
+          </div>`;
       }
     });
 
-    html += `
-      <div class="card">
-        <h4 style="color:var(--text-dim); margin-bottom:10px">RODADA ${
-          ri + 1
-        }</h4>
-        ${
-          espectador
-            ? `<div class="espectador-box">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-          </svg>
-          <strong> Espectador:</strong> ${espectador}</div>`
-            : ""
-        }
-        ${jogosHtml}
-      </div>`;
+    if (temJogoVisivel) {
+      // Localize onde o cabeçalho da rodada é gerado e substitua por este:
+      html += `
+  <div class="card" id="card-rodada-${ri}">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+      <h4 style="color:var(--text-dim); margin:0">RODADA ${ri + 1}</h4>
+      <button class="btn-print-rodada" onclick="printRodada(${ri})">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+        </svg>
+        Compartilhar
+      </button>
+    </div>
+    ${
+      espectador
+        ? `<div class="espectador-box"><strong>Espectador:</strong> ${espectador}</div>`
+        : ""
+    }
+    ${jogosHtml}
+  </div>`;
+    }
   });
 
-  document.getElementById("rodadasHtml").innerHTML = html;
+  document.getElementById("rodadasHtml").innerHTML =
+    html ||
+    "<p style='text-align:center; color:var(--text-dim)'>Nenhum jogo encontrado para esta busca.</p>";
   calcularTabela();
-
-  // 2. Restaura a posição do scroll após a renderização
   window.scrollTo(0, scrollPos);
 }
 
@@ -415,12 +413,14 @@ function resetarTudo() {
 // Função para capturar a tabela como imagem (necessita da lib html2canvas no HTML)
 function compartilharTabela() {
   const elemento = document.getElementById("tabelaParaImagem");
-  html2canvas(elemento, { backgroundColor: "#1e293b", scale: 2 }).then((canvas) => {
-    const link = document.createElement("a");
-    link.download = "tabela-campeonato.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  });
+  html2canvas(elemento, { backgroundColor: "#1e293b", scale: 2 }).then(
+    (canvas) => {
+      const link = document.createElement("a");
+      link.download = "tabela-campeonato.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+  );
 }
 
 // Função para Exportar os dados do campeonato (Backup)
@@ -469,42 +469,67 @@ function importarJSON(event) {
 }
 
 function atualizarPlacarDinamicamente(ri, ji, lado, valor) {
-    const key = `r${ri}j${ji}${lado}`;
-    dados.placares[key] = valor;
-    
-    // Salva no localStorage sem renderizar tudo
-    localStorage.setItem("csc_fc_v2", JSON.stringify(dados));
+  const key = `r${ri}j${ji}${lado}`;
+  dados.placares[key] = valor;
 
-    const valA = dados.placares[`r${ri}j${ji}a`] || "";
-    const valB = dados.placares[`r${ri}j${ji}b`] || "";
+  // Salva no localStorage sem renderizar tudo
+  localStorage.setItem("csc_fc_v2", JSON.stringify(dados));
 
-    const elCasa = document.getElementById(`jogo-${ri}-${ji}-casa`);
-    const elFora = document.getElementById(`jogo-${ri}-${ji}-fora`);
+  const valA = dados.placares[`r${ri}j${ji}a`] || "";
+  const valB = dados.placares[`r${ri}j${ji}b`] || "";
 
-    if (elCasa && elFora) {
-        // Limpa classes anteriores
-        elCasa.classList.remove("vitoria", "derrota", "empate");
-        elFora.classList.remove("vitoria", "derrota", "empate");
+  const elCasa = document.getElementById(`jogo-${ri}-${ji}-casa`);
+  const elFora = document.getElementById(`jogo-${ri}-${ji}-fora`);
 
-        if (valA !== "" && valB !== "") {
-            const gA = parseInt(valA);
-            const gB = parseInt(valB);
+  if (elCasa && elFora) {
+    // Limpa classes anteriores
+    elCasa.classList.remove("vitoria", "derrota", "empate");
+    elFora.classList.remove("vitoria", "derrota", "empate");
 
-            if (gA > gB) {
-                elCasa.classList.add("vitoria");
-                elFora.classList.add("derrota");
-            } else if (gB > gA) {
-                elFora.classList.add("vitoria");
-                elCasa.classList.add("derrota");
-            } else {
-                elCasa.classList.add("empate");
-                elFora.classList.add("empate");
-            }
-        }
+    if (valA !== "" && valB !== "") {
+      const gA = parseInt(valA);
+      const gB = parseInt(valB);
+
+      if (gA > gB) {
+        elCasa.classList.add("vitoria");
+        elFora.classList.add("derrota");
+      } else if (gB > gA) {
+        elFora.classList.add("vitoria");
+        elCasa.classList.add("derrota");
+      } else {
+        elCasa.classList.add("empate");
+        elFora.classList.add("empate");
+      }
     }
+  }
 
-    // Atualiza apenas a tabela de classificação
-    calcularTabela();
+  // Atualiza apenas a tabela de classificação
+  calcularTabela();
+}
+
+function printRodada(index) {
+  const elemento = document.getElementById(`card-rodada-${index}`);
+  const btn = elemento.querySelector("button");
+
+  // 1. Preparar para o print
+  btn.style.opacity = "0"; // Esconde o botão sem mudar o layout
+  elemento.classList.add("card-print-fix"); // Aplica as cores fixas
+
+  html2canvas(elemento, {
+    backgroundColor: "#1e293b",
+    scale: 3, // Aumentei o scale para 3 para ficar ainda mais nítido
+    logging: false,
+    useCORS: true,
+  }).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = `Rodada_${index + 1}_TabelaFC.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+
+    // 2. Restaurar estado original
+    btn.style.opacity = "1";
+    elemento.classList.remove("card-print-fix");
+  });
 }
 
 document.addEventListener("DOMContentLoaded", render);
