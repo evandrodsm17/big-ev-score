@@ -21,7 +21,23 @@
       <div id="alertaCampeao"></div>
 
       <div class="card" id="setupArea">
-        <h3>🎮 Cadastro de Jogadores</h3>
+        <h3>🎮 Configuração do Torneio</h3>
+
+        <div class="config-campeonato" style="margin-bottom: 20px">
+          <label
+            style="
+              display: block;
+              margin-bottom: 8px;
+              font-size: 0.8rem;
+              color: var(--primary);
+            "
+            >TIPO DE CAMPEONATO:</label
+          >
+          <select id="tipoCampeonato" onchange="popularSelect()">
+            <option value="BRASILEIRAO">🇧🇷 BRASILEIRÃO</option>
+            <option value="CHAMPIONS">🇪🇺 CHAMPIONS LEAGUE</option>
+          </select>
+        </div>
         <div class="setup-grid">
           <input type="text" id="playerInput" placeholder="NOME DO JOGADOR" />
           <select id="clubSelect"></select>

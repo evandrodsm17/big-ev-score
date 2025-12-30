@@ -22,6 +22,31 @@ const CLUBES_BRASILEIRAO = [
   { id: 20, nome: "RB Bragantino", escudo: "./escudos/bragantino.png" },
 ];
 
+const CLUBES_EUROPA = [
+  { id: 1, nome: "Manchester United", escudo: "./escudos/manunited.png" },
+  { id: 2, nome: "Real Madrid", escudo: "./escudos/realmadrid.png" },
+  { id: 3, nome: "Barcelona", escudo: "./escudos/barcelona.png" },
+  { id: 4, nome: "Bayern Munich", escudo: "./escudos/bayern.png" },
+  { id: 5, nome: "Liverpool", escudo: "./escudos/liverpool.png" },
+  { id: 6, nome: "Juventus", escudo: "./escudos/juventus.png" },
+  { id: 7, nome: "Chelsea", escudo: "./escudos/chelsea.png" },
+  { id: 8, nome: "Arsenal", escudo: "./escudos/arsenal.png" },
+  { id: 9, nome: "AC Milan", escudo: "./escudos/acmilan.png" },
+  { id: 10, nome: "Inter Milan", escudo: "./escudos/intermilan.png" },
+  { id: 11, nome: "Manchester City", escudo: "./escudos/mancity.png" },
+  { id: 12, nome: "Paris Saint-Germain", escudo: "./escudos/psg.png" },
+  { id: 13, nome: "Tottenham Hotspur", escudo: "./escudos/tottenham.png" },
+  { id: 14, nome: "Borussia Dortmund", escudo: "./escudos/dortmund.png" },
+  { id: 15, nome: "Atletico Madrid", escudo: "./escudos/atleticomadrid.png" },
+  { id: 16, nome: "Ajax", escudo: "./escudos/ajax.png" },
+  { id: 17, nome: "Sevilla", escudo: "./escudos/sevilla.png" },
+  { id: 18, nome: "Napoli", escudo: "./escudos/napoli.png" },
+  { id: 19, nome: "Lyon", escudo: "./escudos/lyon.png" },
+  { id: 20, nome: "Bayern Leverkusen", escudo: "./escudos/leverkusen.png" },
+];
+
+// Dados do campeonato armazenados no localStorage
+
 let dados = JSON.parse(localStorage.getItem("csc_fc_v2")) || {
   jogadores: [], // Formato: {nome, clube, escudo}
   rodadas: [],
@@ -41,12 +66,16 @@ function shuffleArray(array) {
 // --- FUNÇÕES DE SETUP ---
 function popularSelect() {
   const select = document.getElementById("clubSelect");
+  const tipo = document.getElementById("tipoCampeonato").value;
   if (!select) return;
 
   select.innerHTML = '<option value="">SELECIONE UM CLUBE</option>';
 
-  // Criamos uma cópia do array e ordenamos por nome (A-Z)
-  const clubesOrdenados = [...CLUBES_BRASILEIRAO].sort((a, b) =>
+  // Define qual lista usar com base na seleção
+  const listaBase = tipo === "BRASILEIRAO" ? CLUBES_BRASILEIRAO : CLUBES_EUROPA;
+
+  // Ordena por nome (A-Z)
+  const clubesOrdenados = [...listaBase].sort((a, b) =>
     a.nome.localeCompare(b.nome)
   );
 
@@ -58,9 +87,17 @@ function popularSelect() {
 function addJogador() {
   const inputNome = document.getElementById("playerInput");
   const selectClube = document.getElementById("clubSelect");
+  const selectTipo = document.getElementById("tipoCampeonato"); // Captura o seletor de tipo
 
   if (!inputNome.value || !selectClube.value)
     return alert("Preencha nome e clube!");
+
+  // TRAVA: Bloqueia a troca de campeonato após adicionar o primeiro jogador
+  if (dados.jogadores.length >= 0) {
+    selectTipo.disabled = true; 
+    selectTipo.style.opacity = "0.5";
+    selectTipo.style.cursor = "not-allowed";
+  }
 
   const [clube, escudo] = selectClube.value.split("|");
 
@@ -100,7 +137,7 @@ function gerarCampeonato() {
   // --- MELHORIA 1: Embaralhar a lista de participantes antes de começar ---
   // Isso evita que o primeiro jogador cadastrado seja sempre o "pivô" fixo
   let participantes = shuffleArray([...dados.jogadores]);
-  
+
   if (participantes.length % 2 !== 0) {
     participantes.push({ nome: "FOLGA", clube: "FOLGA", escudo: "" });
   }
@@ -115,7 +152,7 @@ function gerarCampeonato() {
     for (let i = 0; i < n / 2; i++) {
       const casa = participantes[i];
       const fora = participantes[n - 1 - i];
-      
+
       // --- MELHORIA 2: Alternar mando de campo aleatoriamente ---
       if (Math.random() > 0.5) {
         jogos.push({ casa, fora });
@@ -123,11 +160,11 @@ function gerarCampeonato() {
         jogos.push({ casa: fora, fora: casa });
       }
     }
-    
+
     // --- MELHORIA 3: Embaralhar a ordem dos jogos dentro da rodada ---
     // Isso evita que o "Time X" seja sempre o primeiro jogo da lista
     dados.rodadas.push(shuffleArray(jogos));
-    
+
     participantes.splice(1, 0, participantes.pop());
   }
 
@@ -567,14 +604,17 @@ function printRodada(index) {
 }
 
 // --- FUNÇÃO VOLTAR AO TOPO ---
-window.onscroll = function() {
+window.onscroll = function () {
   mostrarBotaoTopo();
 };
 
 function mostrarBotaoTopo() {
   const btn = document.getElementById("btnTopo");
   // Se rolar mais de 300px para baixo, o botão aparece
-  if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+  if (
+    document.body.scrollTop > 300 ||
+    document.documentElement.scrollTop > 300
+  ) {
     btn.style.display = "block";
   } else {
     btn.style.display = "none";
@@ -584,7 +624,7 @@ function mostrarBotaoTopo() {
 function voltarAoTopo() {
   window.scrollTo({
     top: 0,
-    behavior: "smooth"
+    behavior: "smooth",
   });
 }
 
