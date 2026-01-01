@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 :root {
   --bg-body: #0f172a;
   --bg-card: #1e293b;
@@ -16,11 +18,72 @@
   padding: 0;
 }
 
+/* Ajuste no Body para não ficar por baixo da navbar */
 body {
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "Open Sans", sans-serif;
   background-color: var(--bg-body);
   color: var(--text-main);
-  padding: 2rem 1rem;
+  padding: 80px 1rem 2rem; /* Aumentado o topo para compensar a navbar */
+}
+
+/* Estilização da Navbar */
+header.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  padding: 0.5rem 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.nav-container {
+  max-width: 950px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 10px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-site {
+  max-width: 45px; /* Tamanho reduzido para a navbar */
+  height: auto;
+  margin-bottom: 0; /* Remove a margem antiga */
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.3));
+}
+
+.brand-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #dd5211;
+  letter-spacing: 1px;
+  font-family: "Open Sans", sans-serif;
+}
+
+.tagline {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* Responsividade para Mobile */
+@media (max-width: 600px) {
+  .tagline {
+    display: none; /* Esconde o texto secundário em telas pequenas */
+  }
+  
+  .nav-container {
+    justify-content: center;
+  }
 }
 
 .container {
@@ -28,16 +91,7 @@ body {
   margin: 0 auto;
 }
 
-.logo-site {
-  max-width: 200px; /* Ajuste o tamanho conforme preferir */
-  height: auto;
-  margin-bottom: 0.5rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  /* Opcional: Adiciona um leve brilho para combinar com o tema dark */
-  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.3));
-}
+
 
 header {
   text-align: center;

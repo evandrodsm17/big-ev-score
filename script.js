@@ -45,6 +45,83 @@ const CLUBES_EUROPA = [
   { id: 20, nome: "Bayern Leverkusen", escudo: "./escudos/leverkusen.png" },
 ];
 
+const SELECOES_MUNDO = [
+  // 🌎 AMÉRICA DO SUL (CONMEBOL)
+  { id: 1, nome: "Brasil", escudo: "./escudos/brasil.png" },
+  { id: 2, nome: "Argentina", escudo: "./escudos/argentina.png" },
+  { id: 3, nome: "Uruguai", escudo: "./escudos/uruguai.png" },
+  { id: 4, nome: "Chile", escudo: "./escudos/chile.png" },
+  { id: 5, nome: "Colômbia", escudo: "./escudos/colombia.png" },
+  { id: 6, nome: "Paraguai", escudo: "./escudos/paraguai.png" },
+  { id: 7, nome: "Peru", escudo: "./escudos/peru.png" },
+  { id: 8, nome: "Equador", escudo: "./escudos/equador.png" },
+  { id: 9, nome: "Bolívia", escudo: "./escudos/bolivia.png" },
+  { id: 10, nome: "Venezuela", escudo: "./escudos/venezuela.png" },
+
+  // 🌎 AMÉRICA DO NORTE, CENTRAL E CARIBE (CONCACAF)
+  { id: 11, nome: "México", escudo: "./escudos/mexico.png" },
+  { id: 12, nome: "Estados Unidos", escudo: "./escudos/estados_unidos.png" },
+  { id: 13, nome: "Canadá", escudo: "./escudos/canada.png" },
+  { id: 14, nome: "Costa Rica", escudo: "./escudos/costa_rica.png" },
+  { id: 15, nome: "Honduras", escudo: "./escudos/honduras.png" },
+  { id: 16, nome: "Panamá", escudo: "./escudos/panama.png" },
+  { id: 17, nome: "Jamaica", escudo: "./escudos/jamaica.png" },
+  { id: 18, nome: "Trinidad e Tobago", escudo: "./escudos/trinidad_tobago.png" },
+  { id: 19, nome: "El Salvador", escudo: "./escudos/el_salvador.png" },
+  { id: 20, nome: "Guatemala", escudo: "./escudos/guatemala.png" },
+
+  // 🌍 EUROPA (UEFA)
+  { id: 21, nome: "Alemanha", escudo: "./escudos/alemanha.png" },
+  { id: 22, nome: "França", escudo: "./escudos/franca.png" },
+  { id: 23, nome: "Itália", escudo: "./escudos/italia.png" },
+  { id: 24, nome: "Espanha", escudo: "./escudos/espanha.png" },
+  { id: 25, nome: "Inglaterra", escudo: "./escudos/inglaterra.png" },
+  { id: 26, nome: "Portugal", escudo: "./escudos/portugal.png" },
+  { id: 27, nome: "Holanda", escudo: "./escudos/holanda.png" },
+  { id: 28, nome: "Bélgica", escudo: "./escudos/belgica.png" },
+  { id: 29, nome: "Croácia", escudo: "./escudos/croacia.png" },
+  { id: 30, nome: "Suíça", escudo: "./escudos/suica.png" },
+  { id: 31, nome: "Áustria", escudo: "./escudos/austria.png" },
+  { id: 32, nome: "Dinamarca", escudo: "./escudos/dinamarca.png" },
+  { id: 33, nome: "Suécia", escudo: "./escudos/suecia.png" },
+  { id: 34, nome: "Polônia", escudo: "./escudos/polonia.png" },
+  { id: 35, nome: "República Tcheca", escudo: "./escudos/republica_tcheca.png" },
+  { id: 36, nome: "Escócia", escudo: "./escudos/escocia.png" },
+  { id: 37, nome: "Sérvia", escudo: "./escudos/servia.png" },
+  { id: 38, nome: "Ucrânia", escudo: "./escudos/ucrania.png" },
+  { id: 39, nome: "Noruega", escudo: "./escudos/noruega.png" },
+  { id: 40, nome: "Turquia", escudo: "./escudos/turquia.png" },
+
+  // 🌍 ÁFRICA (CAF)
+  { id: 41, nome: "Egito", escudo: "./escudos/egito.png" },
+  { id: 42, nome: "Marrocos", escudo: "./escudos/marrocos.png" },
+  { id: 43, nome: "Senegal", escudo: "./escudos/senegal.png" },
+  { id: 44, nome: "Nigéria", escudo: "./escudos/nigeria.png" },
+  { id: 45, nome: "Camarões", escudo: "./escudos/camaroes.png" },
+  { id: 46, nome: "Gana", escudo: "./escudos/gana.png" },
+  { id: 47, nome: "Costa do Marfim", escudo: "./escudos/costa_do_marfim.png" },
+  { id: 48, nome: "Tunísia", escudo: "./escudos/tunisia.png" },
+  { id: 49, nome: "Argélia", escudo: "./escudos/argelia.png" },
+  { id: 50, nome: "África do Sul", escudo: "./escudos/africa_do_sul.png" },
+
+  // 🌏 ÁSIA (AFC)
+  { id: 51, nome: "Japão", escudo: "./escudos/japao.png" },
+  { id: 52, nome: "Coreia do Sul", escudo: "./escudos/coreia_do_sul.png" },
+  { id: 53, nome: "Irã", escudo: "./escudos/ira.png" },
+  { id: 54, nome: "Arábia Saudita", escudo: "./escudos/arabia_saudita.png" },
+  { id: 55, nome: "Austrália", escudo: "./escudos/australia.png" },
+  { id: 56, nome: "Catar", escudo: "./escudos/catar.png" },
+  { id: 57, nome: "Emirados Árabes Unidos", escudo: "./escudos/eau.png" },
+  { id: 58, nome: "Iraque", escudo: "./escudos/iraque.png" },
+  { id: 59, nome: "Uzbequistão", escudo: "./escudos/uzbequistao.png" },
+  { id: 60, nome: "China", escudo: "./escudos/china.png" },
+
+  // 🌏 OCEANIA (OFC)
+  { id: 61, nome: "Nova Zelândia", escudo: "./escudos/nova_zelandia.png" },
+  { id: 62, nome: "Ilhas Salomão", escudo: "./escudos/ilhas_salomao.png" },
+  { id: 63, nome: "Taiti", escudo: "./escudos/taiti.png" }
+];
+
 // Dados do campeonato armazenados no localStorage
 
 let dados = JSON.parse(localStorage.getItem("csc_fc_v2")) || {
