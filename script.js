@@ -45,6 +45,29 @@ const CLUBES_EUROPA = [
   { id: 20, nome: "Bayern Leverkusen", escudo: "./escudos/leverkusen.png" },
 ];
 
+const CLUBES_DIVERSOS = [
+  { id: 1, nome: "Al Ahly", escudo: "./escudos/alahlay.png" },
+  { id: 2, nome: "Cruz Azul", escudo: "./escudos/cruzazul.png" },
+  { id: 3, nome: "Tigres UANL", escudo: "./escudos/tigresuanl.png" },
+  { id: 4, nome: "Sydney FC", escudo: "./escudos/sydneyfc.png" },
+  { id: 5, nome: "Auckland City", escudo: "./escudos/aucklandcity.png" },
+  { id: 6, nome: "Al Nassr", escudo: "./escudos/alnassr.png" },
+  { id: 7, nome: "Al Hilal", escudo: "./escudos/alhilal.png" },
+  { id: 8, nome: "Boca Juniors", escudo: "./escudos/bocajuniors.png" },
+  { id: 9, nome: "River Plate", escudo: "./escudos/riverplate.png" },
+  { id: 10, nome: "Peñarol", escudo: "./escudos/penarol.png" },
+  { id: 11, nome: "Nacional", escudo: "./escudos/nacional.png" },
+  { id: 12, nome: "Alianza Lima", escudo: "./escudos/alianzalima.png" },
+  { id: 13, nome: "Club América", escudo: "./escudos/clubamerica.png" },
+  { id: 14, nome: "Pachuca", escudo: "./escudos/pachuca.png" },
+  { id: 15, nome: "Ulsan Hyundai", escudo: "./escudos/ulsanhyundai.png" },
+  { id: 16, nome: "Jeonbuk Hyundai", escudo: "./escudos/jeonbukhyundai.png" },
+  { id: 17, nome: "Al Ittihad", escudo: "./escudos/alittihad.png" },
+  { id: 18, nome: "Inter Miami", escudo: "./escudos/intermiami.png" },
+  { id: 19, nome: "LA Galaxy", escudo: "./escudos/lagalaxy.png" },
+  { id: 20, nome: "Seattle Sounders", escudo: "./escudos/seattlesounders.png" },
+];
+
 const SELECOES = [
   { id: 1, nome: "Brasil", escudo: "./escudos/selecoes/brasil.png" },
   { id: 2, nome: "Argentina", escudo: "./escudos/selecoes/argentina.png" },
@@ -118,12 +141,47 @@ const SELECOES = [
 // Dados do campeonato armazenados no localStorage
 
 let dados = JSON.parse(localStorage.getItem("csc_fc_v2")) || {
+  nomeTorneio: "BIG EV SCORE", // Novo campo
   jogadores: [], // Formato: {nome, clube, escudo}
   rodadas: [],
   placares: {},
   ativo: false,
   config: { idaEVolta: false },
 };
+
+let isAdmin = false;
+
+function fazerLoginAdmin() {
+  const senha = prompt("Digite a senha de administrador:");
+  if (senha === "1234") {
+    // Defina sua senha aqui
+    isAdmin = true;
+    alert("Modo Administrador Ativado!");
+    render();
+  } else {
+    alert("Senha incorreta!");
+  }
+}
+
+function verificarSenhaAdmin() {
+  const senha = prompt("Digite a senha de administrador para editar:");
+  if (senha === "1234") { // Mude a senha aqui
+    isAdmin = true;
+    render();
+    alert("Modo Edição Ativado!");
+  } else {
+    alert("Senha incorreta!");
+  }
+}
+
+function configurarTorneio() {
+    const nomeInput = document.getElementById("nomeTorneioInput");
+    if(nomeInput) {
+        dados.nomeTorneio = nomeInput.value || "BIG EV SCORE";
+    }
+    // Chame sua função original de gerar aqui
+    gerarCampeonato(); 
+}
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -165,6 +223,10 @@ function popularSelect() {
     listaBase = CLUBES_EUROPA;
   } else if (tipo === "SELECOES") {
     listaBase = SELECOES;
+  } else if (tipo === "MUNDIAL") {
+    // Nova condição
+    // Une os dois arrays em um só
+    listaBase = [...CLUBES_BRASILEIRAO, ...CLUBES_EUROPA, ...CLUBES_DIVERSOS];
   }
 
   if (!listaBase || listaBase.length === 0) return;
@@ -223,6 +285,8 @@ function irParaTabela() {
 }
 
 function gerarCampeonato() {
+  const inputNome = document.getElementById("nomeTorneioInput").value;
+  dados.nomeTorneio = inputNome || "BIG EV SCORE";
   const numJogadores = dados.jogadores.length;
 
   if (numJogadores < 2) return alert("Adicione pelo menos 2 jogadores.");
@@ -410,8 +474,15 @@ function salvar() {
 
 function render() {
   const scrollPos = window.scrollY;
-  const searchTerm =
-    document.getElementById("searchClub")?.value.toLowerCase() || "";
+  const searchTerm = document.getElementById("searchClub")?.value.toLowerCase() || "";
+
+  document.getElementById("leagueName").innerText = dados.nomeTorneio || "BIG EV Tournament";
+
+  // --- ATUALIZAÇÃO DO NOME DO TORNEIO NO HEADER DA TABELA ---
+  const tituloTabela = document.querySelector(".brand-name"); // Ou o ID específico onde exibe o nome
+  if (tituloTabela && dados.nomeTorneio) {
+    tituloTabela.innerText = dados.nomeTorneio;
+  }
 
   // --- RENDERIZAÇÃO DE INSCRITOS --- (Mantida exatamente igual)
   const containerInscritos = document.getElementById("listaJogadores");
@@ -423,6 +494,8 @@ function render() {
     containerInscritos.style.marginBottom = "20px";
 
     dados.jogadores.forEach((j, index) => {
+      const btnRemover = `<button onclick="removerJogador(${index})" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; color: var(--negative); border: none; font-size: 1.2rem; cursor: pointer; padding: 0 5px;">&times;</button>`;
+
       containerInscritos.innerHTML += `
         <div class="card-inscrito" style="background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 12px; min-width: 220px; position: relative;">
           <img src="${j.escudo}" width="35" height="35" style="object-fit: contain;">
@@ -430,7 +503,7 @@ function render() {
             <div style="font-weight: bold; font-size: 0.9rem; color: var(--text-main);">${j.nome}</div>
             <div style="font-size: 0.75rem; color: var(--primary);">${j.clube}</div>
           </div>
-          <button onclick="removerJogador(${index})" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; color: var(--negative); border: none; font-size: 1.2rem; cursor: pointer; padding: 0 5px;">&times;</button>
+          ${btnRemover}
         </div>
       `;
     });
@@ -445,6 +518,14 @@ function render() {
 
   document.getElementById("setupArea").style.display = "none";
   document.getElementById("campeonatoArea").style.display = "block";
+
+  // --- CONTROLE DE BOTÕES ADMIN (Exportar e Resetar) ---
+  // Selecionamos os botões pela classe que você já tem no HTML
+  const btnSalvar = document.querySelector(".btn-export");
+  const btnReset = document.querySelector(".btn-reset");
+
+  if (btnSalvar) btnSalvar.style.display = isAdmin ? "flex" : "none";
+  if (btnReset) btnReset.style.display = isAdmin ? "flex" : "none";
 
   // --- CONTROLE DE VISIBILIDADE DA TABELA ---
   // Se for MATA_MATA, escondemos o card da tabela e o botão de exportar tabela
@@ -518,9 +599,9 @@ function render() {
               <span class="nome-jogador">${jogo.casa.nome}</span>
             </div>
             <div class="placar-input-group">
-              <input type="number" value="${valA}" oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'a', this.value)">
+              <input type="number" ${isAdmin ? '' : 'disabled'} value="${valA}" oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'a', this.value)">
               <span style="color: var(--border)">x</span>
-              <input type="number" value="${valB}" oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'b', this.value)">
+              <input type="number" ${isAdmin ? '' : 'disabled'} value="${valB}" oninput="atualizarPlacarDinamicamente('${ri}', '${ji}', 'b', this.value)">
             </div>
             <div class="time-container ${clB}" id="${jogoId}-fora" style="text-align:left">
               <img src="${jogo.fora.escudo}" class="escudo">
@@ -558,8 +639,8 @@ function render() {
           
           ${
             dados.config.formato === "MATA_MATA" &&
-            ri === dados.rodadas.length - 1
-              ? `<button class="btn-primary" onclick="proximaFaseMataMata()" style="width:100%; margin-top:15px; background:var(--green-button-bg)">
+            ri === dados.rodadas.length - 1 && isAdmin
+              ? `<button class="btn-primary" onclick="proximaFaseMataMata()" style="width:100%; margin-top:15px; background:var(--green-button-bg); color: var(--green-button-text);">
               AVANÇAR PARA PRÓXIMA FASE
              </button>`
               : ""
@@ -611,7 +692,13 @@ function calcularTabela() {
 
   dados.rodadas.forEach((rodada, ri) => {
     rodada.forEach((jogo, ji) => {
-      if (!jogo.casa || !jogo.fora || jogo.casa.nome === "FOLGA" || jogo.fora.nome === "FOLGA") return;
+      if (
+        !jogo.casa ||
+        !jogo.fora ||
+        jogo.casa.nome === "FOLGA" ||
+        jogo.fora.nome === "FOLGA"
+      )
+        return;
 
       const ga = parseInt(dados.placares[`r${ri}j${ji}a`]);
       const gb = parseInt(dados.placares[`r${ri}j${ji}b`]);
@@ -631,31 +718,41 @@ function calcularTabela() {
       pB.gc += ga;
 
       if (ga > gb) {
-        pA.pts += 3; pA.v++; pA.ultimos.push("v");
-        pB.d++; pB.ultimos.push("d");
+        pA.pts += 3;
+        pA.v++;
+        pA.ultimos.push("v");
+        pB.d++;
+        pB.ultimos.push("d");
       } else if (gb > ga) {
-        pB.pts += 3; pB.v++; pB.ultimos.push("v");
-        pA.d++; pA.ultimos.push("d");
+        pB.pts += 3;
+        pB.v++;
+        pB.ultimos.push("v");
+        pA.d++;
+        pA.ultimos.push("d");
       } else {
-        pA.pts += 1; pA.e++; pA.ultimos.push("e");
-        pB.pts += 1; pB.e++; pB.ultimos.push("e");
+        pA.pts += 1;
+        pA.e++;
+        pA.ultimos.push("e");
+        pB.pts += 1;
+        pB.e++;
+        pB.ultimos.push("e");
       }
     });
   });
 
   const ranking = Object.values(s).sort(
-    (a, b) => b.pts - a.pts || (b.gp - b.gc) - (a.gp - a.gc) || b.gp - a.gp
+    (a, b) => b.pts - a.pts || b.gp - b.gc - (a.gp - a.gc) || b.gp - a.gp
   );
 
   // --- CORREÇÃO DA LÓGICA DE FINALIZAÇÃO ---
   // O número de jogos que cada um faz é sempre (Total de Participantes Real - 1)
   // Se tenho 5 jogadores, cada um faz 4 jogos.
   const nParticipantes = dados.jogadores.length;
-  const totalJogosEsperados = (nParticipantes - 1) * (dados.config.idaEVolta ? 2 : 1);
+  const totalJogosEsperados =
+    (nParticipantes - 1) * (dados.config.idaEVolta ? 2 : 1);
 
-  const campeonatoFinalizado = ranking.length > 0 && ranking.every(
-    (p) => p.j === totalJogosEsperados
-  );
+  const campeonatoFinalizado =
+    ranking.length > 0 && ranking.every((p) => p.j === totalJogosEsperados);
 
   if (campeonatoFinalizado && ranking.length > 0) {
     exibirCampeao(ranking[0]);
@@ -680,8 +777,12 @@ function calcularTabela() {
             <div style="display:flex; align-items:center; gap:8px">
                 <img src="${t.escudo}" width="20">
                 <div>
-                    <div style="font-weight:bold; font-size:0.85rem">${t.clube}</div>
-                    <div style="font-size:0.65rem; color:var(--text-dim)">${t.nome}</div>
+                    <div style="font-weight:bold; font-size:0.85rem">${
+                      t.clube
+                    }</div>
+                    <div style="font-size:0.65rem; color:var(--text-dim)">${
+                      t.nome
+                    }</div>
                 </div>
             </div>
           </td>
@@ -821,27 +922,29 @@ function atualizarPlacarDinamicamente(ri, ji, lado, valor) {
 function printRodada(index) {
   const elemento = document.getElementById(`card-rodada-${index}`);
   const btn = elemento.querySelector(".btn-print-rodada");
-  const isLightMode = document.documentElement.classList.contains("light-mode");
 
-  // 1. Preparar para o print
+  // Esconde o botão de compartilhar na imagem
   btn.style.opacity = "0";
-
-  // Só aplicamos a correção visual forçada se NÃO estivermos no modo claro
-  if (!isLightMode) {
-    elemento.classList.add("card-print-fix");
-  }
-
-  // Definimos a cor de fundo do canvas baseada no tema atual
-  const bgColor = isLightMode ? "#f1f5f9" : "#1e293b";
+  elemento.classList.add("card-print-fix");
 
   html2canvas(elemento, {
-    backgroundColor: bgColor,
-    scale: 3,
+    backgroundColor: "#032824", // Força a cor de fundo do seu tema
+    scale: 3,                  // Aumenta a resolução da imagem
     useCORS: true,
+    onclone: (clonedDoc) => {
+      // No documento clonado, garantimos que os inputs mantenham os valores
+      // e removemos paddings que cortam os números
+      const inputs = clonedDoc.querySelectorAll('input');
+      inputs.forEach(inp => {
+        inp.style.display = 'inline-flex';
+        inp.style.alignItems = 'center';
+        inp.style.justifyContent = 'center';
+        inp.style.padding = '0';
+        inp.style.border = '1px solid #03221e';
+      });
+    }
   }).then((canvas) => {
     compartilharImagem(canvas, `Rodada_${index + 1}.png`);
-
-    // 2. Restaurar estado original
     btn.style.opacity = "1";
     elemento.classList.remove("card-print-fix");
   });

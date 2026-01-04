@@ -65,6 +65,33 @@ header.navbar {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  
+  /* Garante centralização total sem cortes */
+  padding: 0 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  line-height: 1 !important; /* Ajuda a não cortar o topo/base do número */
+  font-family: inherit;
+  overflow: hidden;
+}
+
+input:disabled {
+  background: rgba(40, 38, 38, 0.685) !important;
+  color: var(--text-dim) !important;
+  cursor: not-allowed;
+  border-color: transparent !important;
+  opacity: 0.8;
+}
+
 .nav-container {
   max-width: 950px;
   margin: 0 auto;
@@ -194,7 +221,8 @@ button {
 /* Garante que todos os botões com ícone alinhem corretamente */
 .btn-generate,
 .btn-export,
-.btn-reset {
+.btn-reset,
+.btn-share {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -255,6 +283,12 @@ button svg {
   background: var(--blue-button-bg);
   border: 1px solid var(--blue-button-bg);
   color: var(--blue-button-text);
+}
+
+.btn-share {
+  background: var(--green-button-bg);
+  color: var(--green-button-text);
+  border: 1px solid var(--green-button-bg);
 }
 
 .btn-export:hover {
@@ -483,6 +517,13 @@ input[type="number"] {
 .card-print-fix .time-label,
 .card-print-fix h4 {
   color: var(--text-main) !important;
+}
+
+.card-print-fix input {
+  background-color: var(--bg-input) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-main) !important;
+  border-radius: 4px;
 }
 
 /* Ajuste no container para evitar transbordamento */
