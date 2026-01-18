@@ -142,6 +142,7 @@ const SELECOES = [
 
 let dados = JSON.parse(localStorage.getItem("csc_fc_v2")) || {
   nomeTorneio: "BIG EV SCORE", // Novo campo
+  senhaAdmin: "", // Novo campo para armazenar a senha definida
   jogadores: [], // Formato: {nome, clube, escudo}
   rodadas: [],
   placares: {},
@@ -153,7 +154,7 @@ let isAdmin = false;
 
 function fazerLoginAdmin() {
   const senha = prompt("Digite a senha de administrador:");
-  if (senha === "1234") {
+  if (senha === dados.senhaAdmin) {
     // Defina sua senha aqui
     isAdmin = true;
     alert("Modo Administrador Ativado!");
@@ -165,7 +166,7 @@ function fazerLoginAdmin() {
 
 function verificarSenhaAdmin() {
   const senha = prompt("Digite a senha de administrador para editar:");
-  if (senha === "1234") { // Mude a senha aqui
+  if (senha === dados.senhaAdmin) { // Mude a senha aqui
     isAdmin = true;
     render();
     alert("Modo Edição Ativado!");
@@ -286,6 +287,14 @@ function irParaTabela() {
 
 function gerarCampeonato() {
   const inputNome = document.getElementById("nomeTorneioInput").value;
+  // SOLICITAÇÃO DA SENHA NA GERAÇÃO
+  const novaSenha = prompt("Defina uma SENHA DE ADMINISTRADOR para este torneio:");
+
+  if (!novaSenha || novaSenha.trim() === "") {
+    return alert("Você precisa definir uma senha para gerenciar o torneio!");
+  }
+  dados.senhaAdmin = novaSenha; // Salva a senha escolhida
+
   dados.nomeTorneio = inputNome || "BIG EV SCORE";
   const numJogadores = dados.jogadores.length;
 
